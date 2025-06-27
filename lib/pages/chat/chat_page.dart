@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:menu_weather/components/chat_form.dart';
+import 'package:menu_weather/utils/utils.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -8,12 +10,26 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
+  final TextEditingController _chatController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
        body: Center(
-        child: Text('chat page'),
-       ),
+        child: SizedBox(
+          width: screenWidth(context) * 0.95,
+          height: 30,
+          
+          child: Column(
+            children: [
+              ChatForm(
+                textController: _chatController,
+                labelText: 'メッセージを入力してください',
+              )
+            ],
+          ),
+        )
+      ),
     );
   }
 }

@@ -14,3 +14,11 @@ void movePage(BuildContext context, Widget widget) {
     context, MaterialPageRoute(builder: (context) => widget)
   );
 }
+
+double screenHeight(BuildContext context) {
+  return MediaQuery.of(context).size.height;
+}
+
+double screenWidth(BuildContext context) {
+  return MediaQuery.of(context).size.width;
+}
