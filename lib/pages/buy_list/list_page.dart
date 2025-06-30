@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu_weather/main.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
@@ -9,7 +10,7 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   
-  Map<String, dynamic>map={
+  Map<String?, dynamic>map={
     'ingredients' : [
       {
         'name' : 'potato',
@@ -59,7 +60,18 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      backgroundColor: Colors.grey,
+      body: Container(
+        width: 400,
+        height: 800,
+        margin: EdgeInsets.all(10.0),
+        padding: EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        child: Text(map['ingredients'][0]['name']),
+    
+      ),
       
 
     );
