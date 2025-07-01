@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu_weather/utils/utils.dart';
 import 'package:menu_weather/main.dart';
 
 class ListPage extends StatefulWidget {
@@ -60,18 +61,46 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // 背景色
       backgroundColor: Colors.grey,
-      body: Container(
-        width: 400,
-        height: 800,
-        margin: EdgeInsets.all(10.0),
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 料理名
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                // decoration: BoxDecoration(
+                //   color: Colors.grey
+                // ),
+                margin: EdgeInsets.only(left:screenWidth(context)*0.1,
+                  bottom: 15
+                ),
+                width: screenWidth(context)*0.8,
+                // height: screenHeight(context)*0.8,
+                child: Text('ポテトサラダ',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            ),
+            // 買い物リスト
+            Container(
+              width: screenWidth(context)*0.8,
+              height: screenHeight(context)*0.8,
+              padding: EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Text(map['ingredients'][0]['name']),
+            
+            ),
+          ]
         ),
-        child: Text(map['ingredients'][0]['name']),
-    
-      ),
+      )
       
 
     );
