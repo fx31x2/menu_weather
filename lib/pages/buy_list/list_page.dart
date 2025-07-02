@@ -71,14 +71,13 @@ class _ListPageState extends State<ListPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: Container(
-                // decoration: BoxDecoration(
-                //   color: Colors.grey
-                // ),
                 margin: EdgeInsets.only(left:screenWidth(context)*0.1,
                   bottom: 15
                 ),
                 width: screenWidth(context)*0.8,
-                // height: screenHeight(context)*0.8,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20)                  
+                ),
                 child: Text('ポテトサラダ',
                   style: TextStyle(
                     fontSize: 30,
@@ -91,12 +90,47 @@ class _ListPageState extends State<ListPage> {
             Container(
               width: screenWidth(context)*0.8,
               height: screenHeight(context)*0.8,
-              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.fromLTRB(45.0, 30.0, 30.0, 30.0),
               decoration: BoxDecoration(
                 color: Colors.white,
+                borderRadius: BorderRadius.circular(20)
               ),
-              child: Text(map['ingredients'][0]['name']),
-            
+              
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: screenWidth(context)*0.3,
+                    child: Text(map['ingredients'][0]['name'],
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ),
+                  Container(
+                    width: screenWidth(context)*0.3,
+                    child: Text((map['ingredients'][0]['price']).toString(),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ),
+                  Container(
+                    width: screenWidth(context)*0.1,
+                    child: Checkbox(value: map['ingredients'][0]['checkbox'],
+                     onChanged: (value){
+                      setState(() {
+                        map['ingredients'][0]['checkbox'] = value!;
+                        print(map['ingredients'][0]['checkbox']);
+                      });
+                     }),
+                  )
+                ],
+                
+              )
+
             ),
           ]
         ),
