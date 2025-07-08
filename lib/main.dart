@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:menu_weather/pages/chat/chat_page.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await dotenv.load(fileName: ".env");
-
-  runApp(const ProviderScope(
-    child: MyApp()
-  ));  
+ await dotenv.load(fileName: '.env');
+  
+  runApp(const MyApp());  
 }
 
 class MyApp extends StatelessWidget {
@@ -18,8 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // home: ChatPage(apikey: dotenv.env['GEMINI_API_KEY'] ?? ''),
+    return const MaterialApp(
       home: ChatPage(),
     );
   }
