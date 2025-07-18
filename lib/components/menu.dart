@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:menu_weather/components/menu_item.dart';
 import 'package:menu_weather/pages/buy_list/list_page.dart';
+import 'package:menu_weather/pages/recipe/recipe_page.dart';
 import 'package:menu_weather/utils/utils.dart';
 
 class Menu extends StatefulWidget {
@@ -32,6 +33,13 @@ class _MenuState extends State<Menu> {
               '買い物リスト', 
               () {
                 movePage(context, ListPage());
+              }
+            ),
+            buildMenuItem(
+              context,
+              'レシピ', 
+              () {
+                movePage(context, RecipePage());
               }
             ),
           ],
