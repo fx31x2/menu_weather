@@ -15,22 +15,27 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: screenHeight(context) * 0.3,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        color: Colors.blue[400]
-      ),
-      child: ListView(
-        children: [
-          buildMenuItem(
-            context,
-            '買い物リスト', 
-            () {
-              movePage(context, ListPage());
-            }
-          ),
-        ],
+    return GestureDetector(
+      onTap: () {
+        
+      },
+      child: Container(
+        height: screenHeight(context) * 0.3,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+          color: Colors.blue[400]
+        ),
+        child: ListView(
+          children: [
+            buildMenuItem(
+              context,
+              '買い物リスト', 
+              () {
+                movePage(context, ListPage());
+              }
+            ),
+          ],
+        ),
       ),
     );
   }

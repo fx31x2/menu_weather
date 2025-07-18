@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:menu_weather/Provider/IsOpenMenu.dart';
+import 'package:menu_weather/Provider/IsSent.dart';
 import 'package:menu_weather/Provider/Message_Provider.dart';
 import 'package:menu_weather/components/chat_form.dart';
 import 'package:menu_weather/components/menu.dart';
@@ -32,10 +34,13 @@ class ChatPage extends HookConsumerWidget {
     final messageState = ref.watch(messageProvider);
 
     // メニューが開いているかどうか
-    final isOpenMenu = useState<bool> (false);
+    final isOpenMenu = useState<bool>(false);
 
     // メッセージを追加する関数
     void addMessage(User author, String text) {
+      
+      ref.read(isSentProvider.notifier).state = false;
+
       final timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
 
       final message = TextMessage(author: author, id: timeStamp, text: text);
@@ -54,6 +59,8 @@ class ChatPage extends HookConsumerWidget {
       final content = Content.text(text.text);
 
       try {
+        // geminiにメッセージを送信
+        ref.read(isSentProvider.notifier).state = true;
         final res = await chat.value?.sendMessage(content);
         final message = res?.text;
         addMessage(ai, message!);
@@ -80,24 +87,36 @@ class ChatPage extends HookConsumerWidget {
         出力は
         {
           'message' : '何食べたい？',
+          'dishname' : '',
           ingredients: [
             {
-              'name' : 'じゃがいも',
-              'amount' : '2個',
-              'price' : 100,
-              'checkbox : false
+              'name' : '',
+              'amount' : '',
+              'price' : ,
+              'checkbox : 
             },
             {
-              'name' : 'にんじん',
-              'amount' : '1/4個',
-              'price' : 50,
-              'checkbox' : false
+              'name' : '',
+              'amount' : '',
+              'price' : ,
+              'checkbox' : 
+            }
+          ],
+          'recipes' : [
+          {
+              'name' : '',
+              '1' : '',
+              '2' : '',
+              '3' : ''
             }
           ]
-        }
+        },
         の形式で行い、
         messageのvalueにテキスト、
         ingredientsは料理が決まったら材料を入れてください。
+        dishnameには決まった料理名を入れてください。
+        recipesのnameには決まった料理名を入れて、手順を順番に入れ、keyはインクリメントで増やしてください。
+        レシピが決まってない場合はrecipes内は空のまま返してください。
         checkboxには初期値としてfalseを入れてください。
         nameには材料の名前、amountには材料の個数、priceには値段を出力してください。
         出力は1人分の分量と値段でお願いします。
@@ -136,6 +155,7 @@ class ChatPage extends HookConsumerWidget {
       }
 
       debugPrint(messageState.message.toString());
+      return null;
     }, [messages.value]);
 
     return Scaffold(
@@ -159,7 +179,7 @@ class ChatPage extends HookConsumerWidget {
                 text = message.toJson()['text'];
               }
                   
-              return messageItem(text, user);
+              return messageItem(text, user, ref);
             }
           ),
 
@@ -184,6 +204,7 @@ class ChatPage extends HookConsumerWidget {
             child: IconButton(
               onPressed: () {
                 isOpenMenu.value = !isOpenMenu.value;
+                ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
                 debugPrint('onclicked!\n ${isOpenMenu.value}');
               },
               icon: Icon(

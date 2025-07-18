@@ -11,135 +11,158 @@ class ListPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messageState = ref.watch(messageProvider);
 
-    List<Map<String, dynamic>> buyList = List<Map<String, dynamic>>.from(messageState.message['ingredients']);
+    // List<Map<String, dynamic>> buyList = List<Map<String, dynamic>>.from(messageState.message['ingredients']);
 
     return Scaffold(
       
       // 背景色
-      backgroundColor: Colors.grey,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 料理名
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: EdgeInsets.only(left:screenWidth(context)*0.1,
-                  bottom: 15
+      backgroundColor: Colors.grey[200],
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 料理名
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left:screenWidth(context)*0.1,
+                      bottom: 15
+                    ),
+                    width: screenWidth(context)*0.8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20)
+                    ),
+                    child: Text(
+                      messageState.message['dishname'],
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
                 ),
-                width: screenWidth(context)*0.8,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20)
-                ),
-                child: Text('ポテトサラダ',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+                // 買い物リスト
+                Container(
+                  width: screenWidth(context)*0.8,
+                  height: screenHeight(context)*0.8,
+                  padding: EdgeInsets.fromLTRB(45.0, 30.0, 30.0, 30.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)
                   ),
-                ),
-              )
-            ),
-            // 買い物リスト
-            Container(
-              width: screenWidth(context)*0.8,
-              height: screenHeight(context)*0.8,
-              padding: EdgeInsets.fromLTRB(45.0, 30.0, 30.0, 30.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20)
-              ),
-              child: 
-              Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,                    
+                  child: 
+                  Column(
                     children: [
-                      Container(
-                        width: screenWidth(context)*0.2,
-                        margin: EdgeInsets.only(right: 30, bottom: 20),
-                        height: 30,
-                        child: Text('材料',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,                    
+                        children: [
+                          Container(
+                            width: screenWidth(context)*0.2,
+                            margin: EdgeInsets.only(right: 30, bottom: 20),
+                            height: 30,
+                            child: Text(
+                              '材料',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
+                          Container(
+                            width: screenWidth(context)*0.2,
+                            margin: EdgeInsets.only(right: 30),                        
+                            height: 30,
+                            child: Text(
+                              '量',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 30,
+                            child: Text('　',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Container(
-                        width: screenWidth(context)*0.2,
-                        margin: EdgeInsets.only(right: 30),                        
-                        height: 30,
-                        child: Text('量',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 30,
-                        child: Text('　',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+          
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: List<Map<String, dynamic>>.from(messageState.message['ingredients']).length,
+                          itemBuilder: (context, index){
+                            final item = messageState.message['ingredients'];
+                            return ListTile(
+                              title: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: screenWidth(context)*0.25,
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      item['name'],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    )
+                                  ),
+                                  Container(
+                                    width: screenWidth(context)*0.25,
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      item['amount'],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    )
+                                  ),
+                                  Checkbox(
+                                    value: item['checkbox'],
+                                    onChanged: (value){
+                                      messageState.message['ingredients'][index]['checkbox'] = value;
+                                      debugPrint(messageState.message.toString());
+                                    }
+                                  )                     
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
                   ),
-
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: List<Map<String, dynamic>>.from(messageState.message['ingredients']).length,
-                      itemBuilder: (context, index){
-                        final item = messageState.message['ingredients'];
-                        return ListTile(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: screenWidth(context)*0.25,
-                                padding: EdgeInsets.only(top: 10),
-                                child: Text(item['name'],
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                )
-                              ),
-                              Container(
-                                width: screenWidth(context)*0.25,
-                                padding: EdgeInsets.only(top: 10),
-                                child: Text(item['amount'],
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                )
-                              ),
-                              Checkbox(value: item['checkbox'],
-                                onChanged: (value){
-                                  messageState.message['ingredients'][index - 1]['checkbox'] = value;
-                                  debugPrint(messageState.message.toString());
-                                }
-                              )                     
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ]
             ),
-          ]
-        ),
+          ),
+
+          Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                size: 30,
+              )
+            ),
+          )
+        ],
       )
     );
   }
