@@ -13,6 +13,10 @@ class MessageState extends Notifier {
   void update(Map<String, dynamic> value) {
     _message = value;
   }
+
+  void setCheckBox(int index, bool value) {
+    _message['ingredients'][index]['checkbox'] = value;
+  }
 }
 
 final messageProvider = Provider<MessageState> ((ref) => MessageState());

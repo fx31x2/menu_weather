@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:jumping_dot/jumping_dot.dart';
-import 'package:menu_weather/Provider/IsSent.dart';
+// import 'package:jumping_dot/jumping_dot.dart';
+// import 'package:menu_weather/Provider/IsSent.dart';
 
 Widget messageItem(String message, User user, WidgetRef ref) {
   return Container(

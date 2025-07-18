@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'package:menu_weather/components/chat_form.dart';
+import 'package:menu_weather/components/menu.dart';
+
 import 'package:menu_weather/Provider/IsOpenMenu.dart';
 import 'package:menu_weather/Provider/IsSent.dart';
 import 'package:menu_weather/Provider/Message_Provider.dart';
-import 'package:menu_weather/components/chat_form.dart';
-import 'package:menu_weather/components/menu.dart';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart';
@@ -149,7 +151,7 @@ class ChatPage extends HookConsumerWidget {
     useEffect(() {
       Map<String, dynamic> item;
       // messagesの一番後ろの値のvalueを変換
-      if(messages.value[messages.value.length - 1].author.id == 'gemini') {
+      if(messages.value.isNotEmpty && messages.value[messages.value.length - 1].author.id == 'gemini') {
         item = jsonDecode(messages.value[messages.value.length - 1].toJson()['text']);
         messageState.update(item);
       }

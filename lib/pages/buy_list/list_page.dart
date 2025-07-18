@@ -11,8 +11,6 @@ class ListPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messageState = ref.watch(messageProvider);
 
-    // List<Map<String, dynamic>> buyList = List<Map<String, dynamic>>.from(messageState.message['ingredients']);
-
     return Scaffold(
       
       // 背景色
@@ -133,7 +131,8 @@ class ListPage extends HookConsumerWidget {
                                   Checkbox(
                                     value: item['checkbox'],
                                     onChanged: (value){
-                                      messageState.message['ingredients'][index]['checkbox'] = value;
+                                      item['checkbox'] = !item['checkbox'];
+                                      messageState.setCheckBox(index, item['checkbox']);
                                       debugPrint(messageState.message.toString());
                                     }
                                   )                     
