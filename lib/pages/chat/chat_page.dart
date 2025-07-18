@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:menu_weather/Provider/Message_Provider.dart';
 import 'package:menu_weather/components/chat_form.dart';
 import 'package:menu_weather/components/menu.dart';
 
@@ -9,15 +10,16 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:menu_weather/components/message_item.dart';
-import 'package:menu_weather/utils/utils.dart';
 
-class ChatPage extends HookWidget {
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+class ChatPage extends HookConsumerWidget {
   const ChatPage({
       super.key,
     });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     const ai = User(id: 'gemini');
     const user = User(id: 'user');
 
@@ -27,7 +29,12 @@ class ChatPage extends HookWidget {
     final chat = useState<ChatSession?>(null);
     final messages = useState<List<Message>>([]);
     
+    final messageState = ref.watch(messageProvider);
 
+    // メニューが開いているかどうか
+    final isOpenMenu = useState<bool> (false);
+
+    // メッセージを追加する関数
     void addMessage(User author, String text) {
       final timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -35,12 +42,12 @@ class ChatPage extends HookWidget {
       messages.value = [...messages.value, message];
 
       // 画面下に飛ばす
-      debugPrint(scrollController.hasClients.toString());
       if(scrollController.hasClients) {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       }
     }
 
+    // geminiにプロンプトを送信する関数
     Future<void> onSendMessage(PartialText text) async {
       addMessage(user, text.text);
 
@@ -60,6 +67,7 @@ class ChatPage extends HookWidget {
       }
     }
 
+    // geminiに初期プロンプトを送りつける関数
     Future<void> init() async {
       const prompt = '''
         貴方は料理人です。
@@ -76,19 +84,21 @@ class ChatPage extends HookWidget {
             {
               'name' : 'じゃがいも',
               'amount' : '2個',
-              'price' : 100
+              'price' : 100,
+              'checkbox : false
             },
             {
               'name' : 'にんじん',
               'amount' : '1/4個',
-              'price' : 50
+              'price' : 50,
+              'checkbox' : false
             }
           ]
         }
         の形式で行い、
         messageのvalueにテキスト、
-        timestampのvalueに送信した時間を入れてください。
         ingredientsは料理が決まったら材料を入れてください。
+        checkboxには初期値としてfalseを入れてください。
         nameには材料の名前、amountには材料の個数、priceには値段を出力してください。
         出力は1人分の分量と値段でお願いします。
         料理が決まらない場合はingredients内は空のまま返してください。
@@ -100,6 +110,7 @@ class ChatPage extends HookWidget {
       addMessage(ai, message!);
     }
 
+    // initStateみたいなもん
     useEffect(() {
       final model = GenerativeModel(
         model: 'gemini-1.5-flash',
@@ -115,48 +126,74 @@ class ChatPage extends HookWidget {
       return null;
     }, []);
 
+    // メッセージが更新されたらbuyList更新
+    useEffect(() {
+      Map<String, dynamic> item;
+      // messagesの一番後ろの値のvalueを変換
+      if(messages.value[messages.value.length - 1].author.id == 'gemini') {
+        item = jsonDecode(messages.value[messages.value.length - 1].toJson()['text']);
+        messageState.update(item);
+      }
+
+      debugPrint(messageState.message.toString());
+    }, [messages.value]);
+
     return Scaffold(
-      drawer: Menu(),
       backgroundColor: Colors.white,
-      body: Column(
+      body: Stack(
         children: [
-          SizedBox(
-            height: screenHeight(context) * 0.87,
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: messages.value.length,
-              itemBuilder: (context, index) {
-                final message = messages.value[index];
-                final user = messages.value[index].author;
+          ListView.builder(
+            controller: scrollController,
+            itemCount: messages.value.length,
+            itemBuilder: (context, index) {
+              final message = messages.value[index];
+              final user = messages.value[index].author;
+                  
+              // textにaiかuserのチャット文を代入して出力
+              String text = '';
+                  
+              if(user.id == 'gemini') {
+                Map<String, dynamic> item = jsonDecode(message.toJson()['text']);
+                text = item['message'];
+              } else {
+                text = message.toJson()['text'];
+              }
+                  
+              return messageItem(text, user);
+            }
+          ),
 
-                String text = '';
-
-                if(user.id == 'gemini') {
-                  Map<String, dynamic> item = jsonDecode(message.toJson()['text']);
-                  text = item['message'];
-
-                  debugPrint(item['ingredients'].toString());
-                } else {
-                  text = message.toJson()['text'];
-                }
-                
-
-                return messageItem(text, user);
+          // chatbar
+          Align(
+            alignment: Alignment(0, 0.92),
+            child: ChatForm(
+              textController: chatController,
+              hintText: 'メッセージを入力',
+              onSubmitted: (value) {
+                onSendMessage(PartialText(text: chatController.text));
               }
             ),
           ),
-          Expanded(
-            child: Center(
-              child: ChatForm(
-                textController: chatController,
-                hintText: 'メッセージを入力',
-                onSubmitted: (value) {
-                  onSendMessage(PartialText(text: chatController.text));
-                }
+
+          (isOpenMenu.value) ? 
+            Menu() : 
+            Container(),
+
+          // drawer
+          Container(
+            child: IconButton(
+              onPressed: () {
+                isOpenMenu.value = !isOpenMenu.value;
+                debugPrint('onclicked!\n ${isOpenMenu.value}');
+              },
+              icon: Icon(
+                isOpenMenu.value ? Icons.close : Icons.menu,
+                size: 30, 
+                color: isOpenMenu.value ? Colors.white : Colors.black
               )
             ),
-          )
-        ],
+          ),
+        ]
       ),
     );
   }

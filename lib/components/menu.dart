@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:menu_weather/components/menu_item.dart';
+import 'package:menu_weather/pages/buy_list/list_page.dart';
+import 'package:menu_weather/utils/utils.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({super.key});
+  const Menu({
+    super.key,
+  });
 
   @override
   State<Menu> createState() => _MenuState();
@@ -10,15 +15,21 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
-    return  Drawer(
+    return Container(
+      height: screenHeight(context) * 0.3,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        color: Colors.blue[400]
+      ),
       child: ListView(
         children: [
-          ListTile(
-            title: Text('買い物リスト'),
+          buildMenuItem(
+            context,
+            '買い物リスト', 
+            () {
+              movePage(context, ListPage());
+            }
           ),
-          ListTile(
-            title: Text('レシピ'),
-          )
         ],
       ),
     );
