@@ -6,8 +6,6 @@ import 'package:jumping_dot/jumping_dot.dart';
 import 'package:menu_weather/Provider/IsSent.dart';
 
 Widget messageItem(String message, User user, WidgetRef ref) {
-  bool isSent = ref.watch(isSentProvider);
-
   return Container(
     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
 
@@ -23,15 +21,12 @@ Widget messageItem(String message, User user, WidgetRef ref) {
               borderRadius: BorderRadius.circular(12),
               color: (user.id == 'user') ? Colors.blue : Colors.grey[200]
             ),
-            child: (!isSent) ? Text(
+            child: Text(
               message,
               style: TextStyle(
                 color: (user.id == 'user') ? Colors.white : Colors.black
               ),
-            ) : JumpingDots(
-              color: Colors.black,
-              radius: 5,
-            ),
+            )
           )
         )
       ],

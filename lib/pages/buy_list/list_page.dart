@@ -100,7 +100,7 @@ class ListPage extends HookConsumerWidget {
                         child: ListView.builder(
                           itemCount: List<Map<String, dynamic>>.from(messageState.message['ingredients']).length,
                           itemBuilder: (context, index){
-                            final item = messageState.message['ingredients'];
+                            final item = messageState.message['ingredients'][index];
                             return ListTile(
                               title: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
