@@ -25,29 +25,27 @@ class RecipePage extends HookConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: screenWidth(context)*0.1,
-                      bottom: 15
-                    ),
-                    width: screenWidth(context)*0.8,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                        messageState.message['dishname'],
-                        style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Container(
+                  margin: EdgeInsets.only(left: screenWidth(context)*0.1,
+                    bottom: 15
+                  ),
+                  width: screenWidth(context)*0.8 < 768 ? screenWidth(context) * 0.8 : 768,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                      messageState.message['dishname'],
+                      // textAlign: TextAlign.left,
+                      style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 SingleChildScrollView(
                   child: Container(
                     // レシピリスト
-                    width: screenWidth(context)*0.8,
+                    width: screenWidth(context)*0.8 < 768 ? screenWidth(context) * 0.8 : 768,
                     height: screenHeight(context)*0.8,
                     padding: EdgeInsets.fromLTRB(45.0, 30.0, 30.0, 30.0),
                     decoration: BoxDecoration(
