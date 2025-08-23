@@ -22,6 +22,7 @@ class _MenuState extends State<Menu> {
         
       },
       child: Container(
+        padding: EdgeInsets.only(top: 10),
         height: screenHeight(context) * 0.3,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
