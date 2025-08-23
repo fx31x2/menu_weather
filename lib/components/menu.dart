@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:menu_weather/components/menu_item.dart';
 import 'package:menu_weather/pages/buy_list/list_page.dart';
 import 'package:menu_weather/pages/recipe/recipe_page.dart';
+import 'package:menu_weather/pages/setting/setting_page.dart';
 import 'package:menu_weather/utils/utils.dart';
 
 class Menu extends StatefulWidget {
@@ -41,6 +42,12 @@ class _MenuState extends State<Menu> {
               () {
                 movePage(context, RecipePage());
               }
+            ),
+            buildMenuItem(context,
+              '設定',
+              () {
+                movePage(context, SettingPage());
+              },
             ),
           ],
         ),
