@@ -142,7 +142,7 @@ class ChatPage extends HookConsumerWidget {
       );
 
       chat.value = model.startChat();
-      init();
+      // init();
 
       return null;
     }, []);
