@@ -26,7 +26,8 @@ class _MenuState extends State<Menu> {
       child: Stack(
         children: [
           Column(
-            children: [Container(
+            children: [
+              Container(
                 height: screenHeight(context) * 0.14,
                 width: screenWidth(context) * 2,
                 decoration: BoxDecoration(
@@ -37,7 +38,6 @@ class _MenuState extends State<Menu> {
                 height: screenHeight(context) * 0.3,
                 width: screenWidth(context) * 1,
                 decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(radius),
                     bottomRight: Radius.circular(radius)

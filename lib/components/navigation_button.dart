@@ -42,7 +42,7 @@ class NavigationButton extends StatelessWidget {
       decoration: BoxDecoration(
         // color: Colors.red
       ),
-      height: 50,
+      height: 15,
       margin: EdgeInsets.only(top: 20),
       child: IconButton(
         onPressed: () {
