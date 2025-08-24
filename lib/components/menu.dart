@@ -63,7 +63,8 @@ class _MenuState extends State<Menu> {
                   movePage(context, RecipePage());
                 }
               ),
-              buildMenuItem(context,
+              buildMenuItem(
+                context,
                 '設定',
                 () {
                   movePage(context, SettingPage());

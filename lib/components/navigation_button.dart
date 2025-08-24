@@ -37,26 +37,29 @@ class NavigationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment(-0.96, -1),
-      decoration: BoxDecoration(
-        // color: Colors.red
-      ),
-      height: 15,
-      margin: EdgeInsets.only(top: 20),
-      child: IconButton(
-        onPressed: () {
-          // isOpenMenu.value = !isOpenMenu.value;
-          // ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
-          // debugPrint('onclicked!\n ${isOpenMenu.value}');
-          func();
-        },
-        // icon: Icon(
-        //   isOpenMenu.value ? Icons.close : Icons.menu,
-        //   size: 30, 
-        //   color: isOpenMenu.value ? Colors.white : Colors.black
-        // )
-        icon: icon
+    return Align(
+      alignment: Alignment(-0.95, -1),
+      child: Container(
+        decoration: BoxDecoration(
+          // color: Colors.red
+        ),
+        height: 50,
+        width: 50,
+        margin: EdgeInsets.only(top: 20),
+        child: IconButton(
+          onPressed: () {
+            // isOpenMenu.value = !isOpenMenu.value;
+            // ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
+            // debugPrint('onclicked!\n ${isOpenMenu.value}');
+            func();
+          },
+          // icon: Icon(
+          //   isOpenMenu.value ? Icons.close : Icons.menu,
+          //   size: 30, 
+          //   color: isOpenMenu.value ? Colors.white : Colors.black
+          // )
+          icon: icon
+        ),
       ),
     );
   }

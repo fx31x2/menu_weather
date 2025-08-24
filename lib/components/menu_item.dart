@@ -3,9 +3,9 @@ import 'package:menu_weather/utils/utils.dart';
 
 Widget buildMenuItem(BuildContext context, String title, Function onTap) {
   return Container(
-    decoration: BoxDecoration(color: Colors.red),
-    padding: EdgeInsets.only(top: 10, bottom: 5),
-    width: screenWidth(context) * 0.3,
+    // decoration: BoxDecoration(color: Colors.red),
+    padding: EdgeInsets.only(top: 10,),
+    // width: screenWidth(context) * 0.3,
     child: Column(
       children: [
         ListTile(
@@ -23,7 +23,7 @@ Widget buildMenuItem(BuildContext context, String title, Function onTap) {
           },
         ),
         Divider(
-          height: 5,
+          height: 2,
           color: Colors.white,
           indent: 70,
           endIndent: 70,
