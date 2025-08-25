@@ -142,7 +142,7 @@ class ChatPage extends HookConsumerWidget {
       );
 
       chat.value = model.startChat();
-      // init();
+      init();
 
       return null;
     }, []);
@@ -192,7 +192,7 @@ class ChatPage extends HookConsumerWidget {
               textController: chatController,
               hintText: 'メッセージを入力',
               onSubmitted: (value) {
-                // onSendMessage(PartialText(text: chatController.text));
+                onSendMessage(PartialText(text: chatController.text));
               }
             ),
           ),
