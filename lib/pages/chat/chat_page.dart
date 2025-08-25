@@ -16,6 +16,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:menu_weather/components/message_item.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:menu_weather/components/navigation_button.dart';
+import 'package:menu_weather/utils/utils.dart';
 
 class ChatPage extends HookConsumerWidget {
   const ChatPage({
@@ -164,36 +166,70 @@ class ChatPage extends HookConsumerWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          ListView.builder(
-            controller: scrollController,
-            itemCount: messages.value.length,
-            itemBuilder: (context, index) {
-              final message = messages.value[index];
-              final user = messages.value[index].author;
-                  
-              // textにaiかuserのチャット文を代入して出力
-              String text = '';
-                  
-              if(user.id == 'gemini') {
-                Map<String, dynamic> item = jsonDecode(message.toJson()['text']);
-                text = item['message'];
-              } else {
-                text = message.toJson()['text'];
-              }
-                  
-              return messageItem(text, user, ref);
-            }
+          Column(
+            children: [
+              NavigationButton(
+                func: () {
+                  isOpenMenu.value = !isOpenMenu.value;
+                  ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
+                  debugPrint('onclicked!\n ${isOpenMenu.value}');
+                },
+                icon: Icon(
+                  isOpenMenu.value ? Icons.close : Icons.menu,
+                  size: 30, 
+                  color: isOpenMenu.value ? Colors.white : Colors.black
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: messages.value.length,
+                  itemBuilder: (context, index) {
+                    final message = messages.value[index];
+                    final user = messages.value[index].author;
+                        
+                    // textにaiかuserのチャット文を代入して出力
+                    String text = '';
+                        
+                    if(user.id == 'gemini') {
+                      Map<String, dynamic> item = jsonDecode(message.toJson()['text']);
+                      text = item['message'];
+                    } else {
+                      text = message.toJson()['text'];
+                    }
+                        
+                    return messageItem(text, user, ref);
+                  }
+                ),
+              ),
+              
+              // chatbar
+              Container(
+                margin: EdgeInsets.only(bottom: 30),
+                decoration: BoxDecoration(
+                  // color: Colors.red
+                ),
+                child: ChatForm(
+                  textController: chatController,
+                  hintText: 'メッセージを入力',
+                  onSubmitted: (value) {
+                    // onSendMessage(PartialText(text: chatController.text));
+                  }
+                ),
+              ),
+            ],
           ),
 
-          // chatbar
-          Align(
-            alignment: Alignment(0, 0.92),
-            child: ChatForm(
-              textController: chatController,
-              hintText: 'メッセージを入力',
-              onSubmitted: (value) {
-                onSendMessage(PartialText(text: chatController.text));
+          GestureDetector(
+            onTap: () {
+              if(isOpenMenu.value) {
+                isOpenMenu.value = !isOpenMenu.value;
+                ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
               }
+            },
+            child: SizedBox(
+              height: screenHeight(context),
+              width: screenWidth(context),
             ),
           ),
 
@@ -202,20 +238,19 @@ class ChatPage extends HookConsumerWidget {
             Container(),
 
           // drawer
-          Container(
-            child: IconButton(
-              onPressed: () {
-                isOpenMenu.value = !isOpenMenu.value;
-                ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
-                debugPrint('onclicked!\n ${isOpenMenu.value}');
-              },
-              icon: Icon(
-                isOpenMenu.value ? Icons.close : Icons.menu,
-                size: 30, 
-                color: isOpenMenu.value ? Colors.white : Colors.black
-              )
-            ),
-          ),
+          (isOpenMenu.value) ?
+          NavigationButton(
+            func: () {
+              isOpenMenu.value = !isOpenMenu.value;
+              ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
+              debugPrint('onclicked!\n ${isOpenMenu.value}');
+            },
+            icon: Icon(
+              isOpenMenu.value ? Icons.close : Icons.menu,
+              size: 30, 
+              color: isOpenMenu.value ? Colors.white : Colors.black
+            )
+          ) : Container()
         ]
       ),
     );
