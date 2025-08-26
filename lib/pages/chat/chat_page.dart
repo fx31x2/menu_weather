@@ -145,7 +145,7 @@ class ChatPage extends HookConsumerWidget {
     useEffect(() {
       // 共有セッションに差し替え
       chat.value = ref.read(chatSessionProvider);
-      init();
+      // init();
 
       return null;
     }, []);

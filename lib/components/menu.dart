@@ -36,7 +36,7 @@ class _MenuState extends State<Menu> {
               ),
               Container(
                 height: screenHeight(context) * 0.3,
-                width: screenWidth(context) * 1,
+                width: screenWidth(context) * 1.5,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(radius),

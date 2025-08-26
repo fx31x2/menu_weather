@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu_weather/components/navigation_button.dart';
 import 'package:menu_weather/utils/utils.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:async';
@@ -103,17 +104,26 @@ class SettingPage extends HookWidget {
         child: Center(
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 30,
-                  )
-                ),
+              // Align(
+              //   alignment: Alignment.topLeft,
+              //   child: IconButton(
+              //     onPressed: () {
+              //       Navigator.pop(context);
+              //     },
+              //     icon: Icon(
+              //       Icons.arrow_back_ios_new,
+              //       size: 30,
+              //     )
+              //   ),
+              // ),
+              NavigationButton(
+                func: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 30,
+                )
               ),
               // 余りもの登録
               SingleChildScrollView(

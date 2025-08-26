@@ -130,8 +130,14 @@ class ListPage extends HookConsumerWidget {
                                     value: item['checkbox'],
                                     onChanged: (value){
                                       ref.read(messageProvider.notifier).setCheckBox(index, value ?? false);
-                                    }
-                                  )                     
+                                    },
+                                    fillColor: WidgetStateProperty.resolveWith((states) {
+                                      if(states.contains(WidgetState.selected)) {
+                                        return Colors.blue[400];
+                                      }
+                                      return Colors.white;
+                                    })
+                                  )                 
                                 ],
                               ),
                             );
