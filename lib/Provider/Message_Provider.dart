@@ -1,22 +1,32 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MessageState extends Notifier {
-  Map<String, dynamic> _message = {};
-  
+class MessageState extends Notifier<Map<String, dynamic>> {
   @override
   Map<String, dynamic> build() {
-    return _message;
+    return {};
   }
 
-  Map<String, dynamic> get message => _message;
-
-  void update(Map<String, dynamic> value) {
-    _message = value;
+  void setMessage(Map<String, dynamic> value) {
+    state = Map<String, dynamic>.from(value);
   }
 
   void setCheckBox(int index, bool value) {
-    _message['ingredients'][index]['checkbox'] = value;
+    final List<Map<String, dynamic>> ingredients =
+        List<Map<String, dynamic>>.from(state['ingredients'] ?? []);
+    if (index < 0 || index >= ingredients.length) return;
+
+    final updatedIngredients = List<Map<String, dynamic>>.from(ingredients);
+    final updatedItem = Map<String, dynamic>.from(updatedIngredients[index]);
+    updatedItem['checkbox'] = value;
+    updatedIngredients[index] = updatedItem;
+
+    state = {
+      ...state,
+      'ingredients': updatedIngredients,
+    };
   }
 }
 
-final messageProvider = Provider<MessageState> ((ref) => MessageState());
+final messageProvider = NotifierProvider<MessageState, Map<String, dynamic>>(
+  MessageState.new,
+);

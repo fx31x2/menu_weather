@@ -31,7 +31,7 @@ class ListPage extends HookConsumerWidget {
                     borderRadius: BorderRadius.circular(20)
                   ),
                   child: Text(
-                    messageState.message['dishname'],
+                    messageState['dishname'] ?? '',
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -94,9 +94,9 @@ class ListPage extends HookConsumerWidget {
           
                       Expanded(
                         child: ListView.builder(
-                          itemCount: List<Map<String, dynamic>>.from(messageState.message['ingredients']).length,
+                          itemCount: List<Map<String, dynamic>>.from(messageState['ingredients'] ?? []).length,
                           itemBuilder: (context, index){
-                            final item = messageState.message['ingredients'][index];
+                            final item = messageState['ingredients'][index];
                             return ListTile(
                               title: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -129,9 +129,7 @@ class ListPage extends HookConsumerWidget {
                                   Checkbox(
                                     value: item['checkbox'],
                                     onChanged: (value){
-                                      item['checkbox'] = !item['checkbox'];
-                                      messageState.setCheckBox(index, item['checkbox']);
-                                      debugPrint(messageState.message.toString());
+                                      ref.read(messageProvider.notifier).setCheckBox(index, value ?? false);
                                     }
                                   )                     
                                 ],

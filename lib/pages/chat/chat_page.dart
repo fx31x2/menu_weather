@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:menu_weather/Provider/gemini_model.dart';
 
 import 'package:menu_weather/components/chat_form.dart';
 import 'package:menu_weather/components/menu.dart';
@@ -36,6 +36,8 @@ class ChatPage extends HookConsumerWidget {
     final messages = useState<List<Message>>([]);
     
     final messageState = ref.watch(messageProvider);
+
+    // gemini_model は chatSessionProvider に集約
 
     // メニューが開いているかどうか
     final isOpenMenu = useState<bool>(false);
@@ -128,37 +130,39 @@ class ChatPage extends HookConsumerWidget {
         レスポンスには'は1つもつけないでください。
       ''';
 
+      
+
       final res = await chat.value?.sendMessage(Content.text(prompt));
       final message = res?.text;
+
+      // test
+      await sendMessage('ここから先は必ずメンヘラ口調で話してください。', ref);
+
       addMessage(ai, message!);
     }
 
     // initStateみたいなもん
     useEffect(() {
-      final model = GenerativeModel(
-        model: 'gemini-1.5-flash',
-        apiKey: dotenv.env['GEMINI_API_KEY'] ?? '',
-        generationConfig: GenerationConfig(
-          responseMimeType: 'application/json'
-        )
-      );
-
-      chat.value = model.startChat();
+      // 共有セッションに差し替え
+      chat.value = ref.read(chatSessionProvider);
       init();
 
       return null;
     }, []);
 
-    // メッセージが更新されたらbuyList更新
+    // メッセージが更新されたらbuyList更新（ビルド完了後に反映）
     useEffect(() {
-      Map<String, dynamic> item;
-      // messagesの一番後ろの値のvalueを変換
-      if(messages.value.isNotEmpty && messages.value[messages.value.length - 1].author.id == 'gemini') {
-        item = jsonDecode(messages.value[messages.value.length - 1].toJson()['text']);
-        messageState.update(item);
+      if (messages.value.isNotEmpty &&
+          messages.value[messages.value.length - 1].author.id == 'gemini') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final item = jsonDecode(
+            messages.value[messages.value.length - 1].toJson()['text']
+          );
+          ref.read(messageProvider.notifier).setMessage(item);
+        });
       }
 
-      debugPrint(messageState.message.toString());
+      debugPrint(messageState.toString());
       return null;
     }, [messages.value]);
 
@@ -213,7 +217,7 @@ class ChatPage extends HookConsumerWidget {
                   textController: chatController,
                   hintText: 'メッセージを入力',
                   onSubmitted: (value) {
-                    // onSendMessage(PartialText(text: chatController.text));
+                    onSendMessage(PartialText(text: chatController.text));
                   }
                 ),
               ),

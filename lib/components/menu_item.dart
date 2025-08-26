@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:menu_weather/utils/utils.dart';
 
 Widget buildMenuItem(BuildContext context, String title, Function onTap) {
   return Container(
