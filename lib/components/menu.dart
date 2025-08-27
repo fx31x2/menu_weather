@@ -19,12 +19,8 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     Color color = Color.fromARGB(255, 81, 177, 255);
     double radius = 200;
-    return GestureDetector(
-      onTap: () {
-        
-      },
-      child: Stack(
-        children: [
+    return Stack(
+      children: [
           Column(
             children: [
               Container(
@@ -73,7 +69,6 @@ class _MenuState extends State<Menu> {
             ],
           ),
         ],
-      ),
     );
   }
 }

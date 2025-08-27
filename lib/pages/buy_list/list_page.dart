@@ -12,7 +12,6 @@ class ListPage extends HookConsumerWidget {
     final messageState = ref.watch(messageProvider);
 
     return Scaffold(
-      
       // 背景色
       backgroundColor: Colors.grey[200],
       body: Stack(
