@@ -48,10 +48,16 @@ class SettingPage extends HookWidget {
   }
 
 
+
+  
+
+
   @override
   Widget build(BuildContext context) {
 
 
+    late Future<List<Leftover>> _leftovers;
+    _leftovers = DatabaseService.instance.getLeftovers();
 
     
     final leftovers = TextEditingController();
@@ -247,16 +253,54 @@ class SettingPage extends HookWidget {
                               Container(width: 10),
                             ],
                           ),
-                          OutlinedButton(
-                            onPressed: () {
-                              print('余りもの一覧はこちら！');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => LeftoversListPage()),
+                          FutureBuilder<List<Leftover>>(
+                            future: _leftovers,
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                              final leftovers = snapshot.data!;
+                              if (leftovers.isEmpty) {
+                                return const Center(child: Text("登録なし",
+                                  style: TextStyle(fontSize: 25),
+                                ));
+                              }
+                              return ListView.builder(
+                                itemCount: leftovers.length,
+                                itemBuilder: (context, index) {
+                                  final item = leftovers[index];
+                                  return SingleChildScrollView(
+                                    child: 
+                                    ListTile(
+                                      title: Text(item.name,
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      subtitle: Text("量: ${item.amount}",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.delete, color: Colors.blue),
+                                        onPressed: () async {
+                                          await DatabaseService.instance.deleteLeftover(item.id!);
+                                          _leftovers = DatabaseService.instance.getLeftovers(); // リロード
+                                        },
+                                      ),
+
+                                    )
+                                  );
+                                },
                               );
                             },
-                            child: Text('余りものリスト'),
                           ),
+                          
                         ],
                       )
 
@@ -409,7 +453,6 @@ class SettingPage extends HookWidget {
                           Container(width: 10),
                           OutlinedButton(
                             onPressed: () {
-                              print('余りもの一覧はこちら！');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => AllergyListPage()),
