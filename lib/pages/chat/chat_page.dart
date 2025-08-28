@@ -42,20 +42,28 @@ class ChatPage extends HookConsumerWidget {
     // メニューが開いているかどうか
     final isOpenMenu = useState<bool>(false);
 
+    // 一番下にスクロールする関数（ビルド完了後に実行）
+    void scrollToBottom() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!scrollController.hasClients) return;
+        final position = scrollController.position.maxScrollExtent;
+        scrollController.animateTo(
+          position,
+          duration: Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      });
+    }
+
     // メッセージを追加する関数
     void addMessage(User author, String text) {
-      
-      ref.read(isSentProvider.notifier).state = false;
-
       final timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
 
       final message = TextMessage(author: author, id: timeStamp, text: text);
       messages.value = [...messages.value, message];
 
-      // 画面下に飛ばす
-      if(scrollController.hasClients) {
-        scrollController.jumpTo(scrollController.position.maxScrollExtent);
-      }
+      // 画面下に飛ばす（ビルド完了後）
+      scrollToBottom();
     }
 
     // geminiにプロンプトを送信する関数
@@ -67,16 +75,56 @@ class ChatPage extends HookConsumerWidget {
       try {
         // geminiにメッセージを送信
         ref.read(isSentProvider.notifier).state = true;
+        // 読み込み中インジケータ用のプレースホルダーを追加
+        addMessage(ai, '');
+
         final res = await chat.value?.sendMessage(content);
-        final message = res?.text;
-        addMessage(ai, message!);
+        final message = res?.text ?? '';
+
+        // プレースホルダー（最後のAIメッセージ）を実レスポンスで置き換え
+        if (messages.value.isNotEmpty &&
+            messages.value[messages.value.length - 1].author.id == 'gemini') {
+          final last = messages.value[messages.value.length - 1];
+          final updated = TextMessage(
+            author: last.author,
+            id: last.id,
+            text: message,
+          );
+          messages.value = [
+            ...messages.value.sublist(0, messages.value.length - 1),
+            updated,
+          ];
+        } else {
+          // 念のため（想定外の場合）は追加
+          addMessage(ai, message);
+        }
+
+        ref.read(isSentProvider.notifier).state = false;
       } on Exception catch (e) {
         final isOverloaded = e.toString().contains('overloaded');
         final message = isOverloaded
           ? '混雑しています。しばらくしてからもう一度お試しください。'
           : 'エラーが発生しました。';
-        
-        addMessage(ai, message);
+
+        // すでにプレースホルダーがあれば置き換え、なければ追加
+        if (messages.value.isNotEmpty &&
+            messages.value[messages.value.length - 1].author.id == 'gemini' &&
+            (messages.value[messages.value.length - 1] as TextMessage).text.isEmpty) {
+          final last = messages.value[messages.value.length - 1];
+          final updated = TextMessage(
+            author: last.author,
+            id: last.id,
+            text: message,
+          );
+          messages.value = [
+            ...messages.value.sublist(0, messages.value.length - 1),
+            updated,
+          ];
+        } else {
+          addMessage(ai, message);
+        }
+
+        ref.read(isSentProvider.notifier).state = false;
       }
     }
 
@@ -135,9 +183,6 @@ class ChatPage extends HookConsumerWidget {
       final res = await chat.value?.sendMessage(Content.text(prompt));
       final message = res?.text;
 
-      // test
-      await sendMessage('ここから先は必ずメンヘラ口調で話してください。', ref);
-
       addMessage(ai, message!);
     }
 
@@ -145,24 +190,34 @@ class ChatPage extends HookConsumerWidget {
     useEffect(() {
       // 共有セッションに差し替え
       chat.value = ref.read(chatSessionProvider);
-      // init();
+      init();
 
       return null;
     }, []);
 
-    // メッセージが更新されたらbuyList更新（ビルド完了後に反映）
+    // メッセージが更新されたらbuyList更新
     useEffect(() {
       if (messages.value.isNotEmpty &&
           messages.value[messages.value.length - 1].author.id == 'gemini') {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final item = jsonDecode(
-            messages.value[messages.value.length - 1].toJson()['text']
-          );
-          ref.read(messageProvider.notifier).setMessage(item);
+          final lastText = messages.value[messages.value.length - 1]
+              .toJson()['text']
+              .toString();
+          // JSONのみ処理
+          if (lastText.trim().isNotEmpty) {
+            try {
+              final item = jsonDecode(lastText);
+              ref.read(messageProvider.notifier).setMessage(item);
+            } catch (_) {
+              // JSONでない場合は無視
+            }
+          }
         });
       }
 
       debugPrint(messageState.toString());
+      // メッセージが更新されるたびに最下部へ
+      scrollToBottom();
       return null;
     }, [messages.value]);
 
@@ -194,12 +249,28 @@ class ChatPage extends HookConsumerWidget {
                         
                     // textにaiかuserのチャット文を代入して出力
                     String text = '';
-                        
-                    if(user.id == 'gemini') {
-                      Map<String, dynamic> item = jsonDecode(message.toJson()['text']);
-                      text = item['message'];
+                    final rawText = message.toJson()['text']?.toString() ?? '';
+
+                    if (user.id == 'gemini') {
+                      if (rawText.trim().isEmpty) {
+                        // プレースホルダー（JumpingDots表示用）
+                        text = '';
+                      } else {
+                        try {
+                          final decoded = jsonDecode(rawText);
+                          if (decoded is Map<String, dynamic> && decoded['message'] is String) {
+                            text = decoded['message'] as String;
+                          } else {
+                            // 想定外の構造やJSONでない場合はそのまま表示
+                            text = rawText;
+                          }
+                        } catch (_) {
+                          // JSONでなければそのまま表示
+                          text = rawText;
+                        }
+                      }
                     } else {
-                      text = message.toJson()['text'];
+                      text = rawText;
                     }
                         
                     return messageItem(text, user, ref);
@@ -224,16 +295,20 @@ class ChatPage extends HookConsumerWidget {
             ],
           ),
 
-          GestureDetector(
-            onTap: () {
-              if(isOpenMenu.value) {
-                isOpenMenu.value = !isOpenMenu.value;
-                ref.read(isOpenMenuProvider.notifier).state = isOpenMenu.value;
-              }
-            },
-            child: SizedBox(
-              height: screenHeight(context),
-              width: screenWidth(context),
+          IgnorePointer(
+            ignoring: !isOpenMenu.value,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                if (isOpenMenu.value) {
+                  isOpenMenu.value = false;
+                  ref.read(isOpenMenuProvider.notifier).state = false;
+                }
+              },
+              child: SizedBox(
+                height: screenHeight(context),
+                width: screenWidth(context),
+              ),
             ),
           ),
 
