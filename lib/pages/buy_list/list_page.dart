@@ -41,7 +41,7 @@ class ListPage extends HookConsumerWidget {
                 Container(
                   width: screenWidth(context)*0.8 < 768 ? screenWidth(context) * 0.8 : 768,
                   height: screenHeight(context)*0.8,
-                  padding: EdgeInsets.fromLTRB(45.0, 30.0, 30.0, 30.0),
+                  padding: EdgeInsets.fromLTRB(45.0, 20.0, 20.0, 20.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20)

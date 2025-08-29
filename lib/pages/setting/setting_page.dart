@@ -88,7 +88,9 @@ class SettingPage extends HookConsumerWidget {
     final allergycontroller = TextEditingController();
 
     final leftnamecontroller = useTextEditingController();
+    leftnamecontroller.text = '';
     final leftamoutcontroller = useTextEditingController();
+    leftamoutcontroller.text = '';
     final allcontroller = useTextEditingController();
 
     final leftclick = useState<bool>(false);
@@ -295,6 +297,22 @@ class SettingPage extends HookConsumerWidget {
                                             );
                                             return;
                                           }
+                                          // NULL確認
+                                          if (await leftnamecontroller.text == '' || leftamoutcontroller.text == '') {
+                                            // 中身が空だった場合はメッセージ表示
+                                            if(leftnamecontroller.text == '' && leftnamecontroller != ''){
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text("名前が入力されていません")),
+                                              );                                              
+                                            }
+                                            if(leftnamecontroller.text != '' && leftamoutcontroller.text == ''){
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text("量が入力されていません")),
+                                              );
+                                            }
+
+                                            return;
+                                          }       
                                                             
                                           // 存在してない場合は追加
                                           final leftover = Leftover(
@@ -730,19 +748,28 @@ class SettingPage extends HookConsumerWidget {
                                             );
                                             return;
                                           }
-                                                        
+
+                                          // NULL確認
+                                          if (await allergycontroller.text == '') {
+                                            // 中身が空だった場合はメッセージ表示
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: Text("名前が入力されていません")),
+                                            );
+                                            return;
+                                          }              
                                           // 存在しない場合は追加
                                           final allergy = Allergy(
                                             name: allergycontroller.text,
                                           );
-                                          print('データ登録開始');
+                                          
+
+                                          
                                           await
                                           DatabaseService.instance.insertAllergy(allergy);
                                           allergyFuture.value = DatabaseService.instance.getAllergy();
-                                        
-                                          print('データ登録完了');
+                                          sendMessage('${allergy.name}がアレルギーなので、何が何でも材料に加えないでください。', ref);
+                                          
 
-                                          sendMessage('${allergy.name}がアレルギーなので、材料に加えないでください。', ref);
                                                         
                                           allergycontroller.clear();
                                         },
