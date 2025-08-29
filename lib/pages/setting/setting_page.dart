@@ -165,7 +165,8 @@ class SettingPage extends HookConsumerWidget {
                 icon: Icon(
                   Icons.arrow_back_ios_new,
                   size: 30,
-                )
+                ),
+                title: '設定',
               ),
               // 余りもの登録
               SingleChildScrollView(

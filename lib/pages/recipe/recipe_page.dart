@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:menu_weather/Provider/Message_Provider.dart';
+import 'package:menu_weather/components/navigation_button.dart';
 import 'package:menu_weather/utils/utils.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,24 +16,23 @@ class RecipePage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.red[50],
-      body: Stack(
+      body: Column(
         children: [
+          NavigationButton(
+            func: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              size: 30,
+            ),
+            title: 'レシピ',
+          ),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 30,
-                    )
-                  ),
-                ),
+                
                 Container(
                   margin: EdgeInsets.only(left: screenWidth(context)*0.1,
                     bottom: 15
@@ -63,7 +63,7 @@ class RecipePage extends HookConsumerWidget {
                     itemCount: List<Map<String, dynamic>>.from(messageState['recipes'] ?? []).length,
                     itemBuilder: (context, index){
                       final item = Map<String, dynamic>.from(messageState['recipes'][index]);
-
+          
                       String text = '\n';
                       item.forEach((String key, dynamic value){
                         if(key != 'name'){
@@ -97,8 +97,8 @@ class RecipePage extends HookConsumerWidget {
                 )
               ],
             ),
-          )
-        ]
+          ),
+        ],
       ),
     );
   }
