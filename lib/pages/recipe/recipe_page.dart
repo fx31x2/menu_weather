@@ -13,18 +13,26 @@ class RecipePage extends HookConsumerWidget {
     // riverpodを使ってリアルタイムで値（レシピ）を受け取り
     final messageState = ref.watch(messageProvider);
 
-  
-
-
     return Scaffold(
-
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.red[50],
       body: Stack(
         children: [
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 30,
+                    )
+                  ),
+                ),
                 Container(
                   margin: EdgeInsets.only(left: screenWidth(context)*0.1,
                     bottom: 15
@@ -89,23 +97,9 @@ class RecipePage extends HookConsumerWidget {
                 )
               ],
             ),
-          
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                size: 30,
-              )
-            ),
           )
         ]
       ),
-      
     );
   }
 }

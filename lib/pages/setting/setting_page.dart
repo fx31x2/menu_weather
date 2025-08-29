@@ -139,7 +139,7 @@ class SettingPage extends HookConsumerWidget {
 
     return Scaffold(
 
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.green[50],
 
       // 画面全体
       body: SingleChildScrollView(
