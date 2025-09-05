@@ -19,6 +19,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:menu_weather/components/navigation_button.dart';
 import 'package:menu_weather/utils/utils.dart';
 
+import 'package:menu_weather/database/database_service.dart';
+
+
 class ChatPage extends HookConsumerWidget {
   const ChatPage({
       super.key,
@@ -26,6 +29,27 @@ class ChatPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    late Future<List<Leftover>> _leftovers;
+    _leftovers = DatabaseService.instance.getLeftovers();
+
+    late Future<List<Allergy>> _allergy;
+    _allergy = DatabaseService.instance.getAllergy();
+
+    final leftoversFuture = useState<Future<List<Leftover>>>(
+      DatabaseService.instance.getLeftovers()
+    );
+
+    final allergyFuture = useState<Future<List<Allergy>>>(
+      DatabaseService.instance.getAllergy()
+    );
+
+    final allergy = useMemoized(() => DatabaseService.instance.getAllergy());
+    final allsnap = useFuture(allergy);
+
+    final leftover = useMemoized(() => DatabaseService.instance.getLeftovers());
+    final leftsnap = useFuture(leftover);
+
     const ai = User(id: 'gemini');
     const user = User(id: 'user');
 
@@ -128,8 +152,7 @@ class ChatPage extends HookConsumerWidget {
       }
     }
 
-    // geminiに初期プロンプトを送りつける関数
-    Future<void> init() async {
+
       const prompt = '''
         貴方は料理人です。
         自炊の献立を考えるのを補助してください。
@@ -178,6 +201,10 @@ class ChatPage extends HookConsumerWidget {
         レスポンスには'は1つもつけないでください。
       ''';
 
+    // geminiに初期プロンプトを送りつける関数
+    Future<void> init() async {
+
+
       
 
       final res = await chat.value?.sendMessage(Content.text(prompt));
@@ -192,8 +219,28 @@ class ChatPage extends HookConsumerWidget {
       chat.value = ref.read(chatSessionProvider);
       init();
 
+
+
       return null;
     }, []);
+
+    useEffect(() {
+      // 余りもの初期読み込み
+
+      if (leftsnap.hasData && leftsnap.data!.isNotEmpty) {
+        final leftNames = leftsnap.data!.map((l) => l.name).join(', ');
+        sendMessage("$leftNamesが余りものです。こちらの食材を使用した料理を積極的に提供してください。", ref);
+      }
+
+
+      // アレルギー初期読み込み
+      if (allsnap.hasData && allsnap.data!.isNotEmpty) {
+        final allergyNames = allsnap.data!.map((a) => a.name).join(', ');
+        print("\na\nb\nc\nd\n$allergyNames\na\nb\nc\nd");
+        sendMessage("$allergyNamesがアレルギーなので、何が何でも材料に加えないでください。", ref);
+      } 
+      return null;
+    },[allsnap.hasData]);
 
     // メッセージが更新されたらbuyList更新
     useEffect(() {

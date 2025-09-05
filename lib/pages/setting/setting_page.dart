@@ -72,18 +72,13 @@ class SettingPage extends HookConsumerWidget {
       DatabaseService.instance.getAllergy()
     );
 
-  final ValueNotifier<String?> selectedValue = ValueNotifier<String?>(null);
-
-
 
   
 
     final dropdowncontroller = TextEditingController();
-    final focusNode = useFocusNode();
 
     final leftovers = TextEditingController();
 
-    final allergies = TextEditingController();
 
     final allergycontroller = TextEditingController();
 
@@ -91,7 +86,6 @@ class SettingPage extends HookConsumerWidget {
     leftnamecontroller.text = '';
     final leftamoutcontroller = useTextEditingController();
     leftamoutcontroller.text = '';
-    final allcontroller = useTextEditingController();
 
     final leftclick = useState<bool>(false);
     final allclick = useState<bool>(false);
@@ -146,18 +140,6 @@ class SettingPage extends HookConsumerWidget {
         child: Center(
           child: Column(
             children: [
-              // Align(
-              //   alignment: Alignment.topLeft,
-              //   child: IconButton(
-              //     onPressed: () {
-              //       Navigator.pop(context);
-              //     },
-              //     icon: Icon(
-              //       Icons.arrow_back_ios_new,
-              //       size: 30,
-              //     )
-              //   ),
-              // ),
               NavigationButton(
                 func: () {
                   Navigator.pop(context);
@@ -174,12 +156,6 @@ class SettingPage extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Text('余りもの登録',
-                    //   style: TextStyle(
-                    //     fontSize: 35,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
                     leftclick.value == true ?
                     GestureDetector(
                       onTap: () {
@@ -667,6 +643,7 @@ class SettingPage extends HookConsumerWidget {
                                             await
                                             DatabaseService.instance.insertAllergy(allergy);
                                             allergyFuture.value = DatabaseService.instance.getAllergy();
+                                            sendMessage('${dropdownvalue.value}がアレルギーなので、何が何でも材料に加えないでください。', ref);
                                             print('データ登録完了');
                                         
                                           },
